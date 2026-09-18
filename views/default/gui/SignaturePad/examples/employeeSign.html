@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <!--<title>jQuery Signature Pad Examples</title>-->
+    <link href="jquerysctipttop.css" rel="stylesheet" type="text/css">
+    <style>
+        body {
+            font: normal 100.01%/1.375 "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+    </style>
+    <link href="../assets/jquery.signaturepad.css" rel="stylesheet">
+    <!--[if lt IE 9]><script src="../assets/flashcanvas.js"></script><![endif]-->
+
+
+</head>
+<body>
+
+
+    <!--    <div class="sigPad" id="linear" style="width:100%;">
+            <h2>Linear Interpolation (Original)</h2>
+            <ul class="sigNav">
+                <li class="drawIt"><a href="#draw-it" >Draw It</a></li>
+                <li class="clearButton"><a href="#clear">Clear</a></li>
+            </ul>
+            <div class="sig sigWrapper" style="height:auto;">
+                <div class="typed"></div>
+                <canvas id="canvas" class="pad-red" width="162" height="28"></canvas>
+                <hr style="
+                    float: left;
+                    margin-top: -57px;
+                    width: 392px;
+                    margin-left: 4px;
+                    color: black;
+                    border-width: 1px;
+                    border-color: black;
+                    ">
+                <input type="hidden" name="output" class="output">
+                <div>
+                    <input type="button" onclick="uploadEx()" value="Upload" />
+                </div>
+                <form method="post" accept-charset="utf-8" name="form1">
+                    <input name="hidden_data" id='hidden_data' type="hidden"/>
+                    <input name="filename" id='filename' type="hidden" value="Benjies2323"/>
+                </form>
+    
+            </div>
+        </div>-->
+    <div class="sigPad" id="smoothed" style="width:100%;border:none;">      
+        <ul class="sigNav">
+            <li class="drawIt"><a href="#draw-it" >Employee Signature Setup</a></li>
+            <li class="clearButton" style="    font-size: 1.5em;"><a href="#clear">Clear</a></li>
+            <li>
+                <input type="button" onclick="uploadEx()" style="    font-size: 1.5em;" value="Upload" />
+            </li>
+        </ul>
+        <div class="sig sigWrapper" style="height:auto; text-align: center;border:none;">
+            <div style="border: 1px solid #ccc;border-color:#666;display:inline-block;">
+                <canvas id="canvas" class="pad-black" width="162" height="28" ></canvas>
+            </div>
+            <hr style="
+                float: none;
+                margin-top: -57px;
+                width: 392px;
+                color: black;
+                border-width: 1px;
+                border-color: black;
+                ">
+
+            <div id="divSignatureHere" style="margin-top:-24px;display: inline-block;">
+                <span>SIGNATURE HERE</span>
+            </div>
+
+
+            <input type="hidden" name="output" class="output">
+
+            <form method="post" accept-charset="utf-8" name="form1">
+                <input name="hidden_data" id='hidden_data' type="hidden"/>
+                <input name="filename" id='filename' type="hidden" value="tempSignature"/>
+            </form>
+
+        </div>
+    </div>
+    <!--    <div class="sigPad" id="smoothed" style="width:404px;">
+            <h2>Bezier Curves (constant pen width)</h2>
+            <ul class="sigNav">
+                <li class="drawIt"><a href="#draw-it" >Draw It</a></li>
+                <li class="clearButton"><a href="#clear">Clear</a></li>
+            </ul>
+            <div class="sig sigWrapper" style="height:auto;">
+                <div class="typed"></div>
+                <canvas class="pad-black" width="400" height="250"></canvas>
+                <input type="hidden" name="output-2" class="output">
+            </div>
+        </div>-->
+    <!--    <div class="sigPad" id="smoothed-variableStrokeWidth" style="width:404px;">
+            <h2>Bezier Curves (variable pen width)</h2>
+            <ul class="sigNav">
+                <li class="drawIt"><a href="#draw-it" >Draw It</a></li>
+                <li class="clearButton"><a href="#clear">Clear</a></li>
+            </ul>
+            <div class="sig sigWrapper" style="height:auto;">
+                <div class="typed"></div>
+                <canvas class="pad-blue" width="400" height="250"></canvas>
+                <input type="hidden" name="output-3" class="output">
+            </div>
+        </div>-->
+
+    <!--    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>-->
+    <script src="jquery.min.js"></script>
+    <script src="../assets/numeric-1.2.6.min.js"></script>
+    <script src="../assets/bezier.js"></script>
+    <script src="../jquery.signaturepad.js"></script>
+    <script type="text/javascript">
+                    /************************************************************************************************************
+                     (C) www.dhtmlgoodies.com, October 2005
+                     
+                     This is a script from www.dhtmlgoodies.com. You will find this and a lot of other scripts at our website.	
+                     
+                     Terms of use:
+                     You are free to use this script as long as the copyright message is kept intact. However, you may not
+                     redistribute, sell or repost it without our permission.
+                     
+                     Thank you!
+                     
+                     www.dhtmlgoodies.com
+                     Alf Magne Kalleland
+                     
+                     ************************************************************************************************************/
+                    var fitTextInBox_maxWidth = false;
+                    var fitTextInBox_maxHeight = false;
+                    var fitTextInBox_currentWidth = false;
+                    var fitTextInBox_currentBox = false;
+                    var fitTextInBox_currentTextObj = false;
+                    function fitTextInBox(divID, maxHeight)
+                    {
+                        if (maxHeight)
+                            fitTextInBox_maxHeight = maxHeight;
+                        else
+                            fitTextInBox_maxHeight = 10000;
+                        var obj = document.getElementById(divID);
+                        fitTextInBox_maxWidth = obj.offsetWidth;
+                        fitTextInBox_currentBox = obj;
+                        fitTextInBox_currentTextObj = obj.getElementsByTagName('SPAN')[0];
+                        console.log(fitTextInBox_currentTextObj);
+                        fitTextInBox_currentTextObj.style.fontSize = '1px';
+                        fitTextInBox_currentWidth = fitTextInBox_currentTextObj.offsetWidth;
+                        fitTextInBoxAutoFit();
+
+                    }
+
+                    function fitTextInBoxAutoFit()
+                    {
+                        var tmpFontSize = fitTextInBox_currentTextObj.style.fontSize.replace('px', '') / 1;
+                        fitTextInBox_currentTextObj.style.fontSize = tmpFontSize + 1 + 'px';
+                        var tmpWidth = fitTextInBox_currentTextObj.offsetWidth;
+                        var tmpHeight = fitTextInBox_currentTextObj.offsetHeight;
+                        if (tmpWidth >= fitTextInBox_currentWidth && tmpWidth < fitTextInBox_maxWidth && tmpHeight < fitTextInBox_maxHeight && tmpFontSize < 300) {
+                            fitTextInBox_currentWidth = fitTextInBox_currentTextObj.offsetWidth;
+                            fitTextInBoxAutoFit();
+                        } else {
+                            fitTextInBox_currentTextObj.style.fontSize = fitTextInBox_currentTextObj.style.fontSize.replace('px', '') / 1 - 1 + 'px';
+                        }
+                    }
+
+
+
+    </script>
+    <script>
+        $(document).ready(function() {
+          //  $('#linear').signaturePad({drawOnly: true, lineTop: 200, lineColour: 'transparent', bgColour: 'transparent', penColour: '#3d0b0c'});
+            $('#smoothed').signaturePad({drawOnly: true, drawBezierCurves: true, lineTop: 200, penWidth: 12, lineColour: 'transparent', bgColour: 'transparent', penColour: 'black'});
+            //$('#smoothed-variableStrokeWidth').signaturePad({drawOnly: true, drawBezierCurves: true, variableStrokeWidth: true, lineTop: 200, lineColour: 'black', bgColour: 'transparent', penColour: '#145394'});
+            resizeCanvas();
+            onresize = function() {
+                resizeCanvas();
+            };
+        });
+        function resizeCanvas() {
+            $('#smoothed canvas').attr('height', ($('#smoothed').width()+200 - ($('#smoothed').width() * 0.005)) /3.5);
+            $('#smoothed canvas').attr('width', ($('#smoothed').width() - ($('#smoothed').width() * 0.005)));
+            $('#smoothed hr').css('width', ($('#smoothed').width() - ($('#smoothed').width() * 0.005)));
+            $('#divSignatureHere').css('width', ($('#smoothed').width() - ($('#smoothed').width() * 0.580)));
+            fitTextInBox('divSignatureHere');
+            $('#smoothed #divSignatureHere').css({"top": $('#smoothed hr').position().top + 200 + "px"})
+        }
+        function uploadEx() {
+
+            var canvas = document.getElementById("canvas");
+            var dataURL = canvas.toDataURL("image/png");
+            document.getElementById('hidden_data').value = dataURL;
+            var fd = new FormData(document.forms["form1"]);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'upload_data_employee.php', true);
+
+            xhr.upload.onprogress = function(e) {
+                if (e.lengthComputable) {
+                    var percentComplete = (e.loaded / e.total) * 100;
+                    console.log(percentComplete + '% uploaded');
+//                    console.log(e);
+                    alert('Succesfully uploaded' );
+                }
+            };
+
+            xhr.onload = function() {
+
+            };
+            xhr.send(fd);
+        }
+        
+
+    </script>
+    <script src="../assets/json2.min.js"></script>
+
+
+</body>

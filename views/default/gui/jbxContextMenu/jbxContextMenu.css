@@ -1,0 +1,64 @@
+.vmenu{
+	border:1px solid #aaa;
+	position:absolute;
+	background:#efefef !important;
+	display:none;
+	font-size:0.75em;
+	box-shadow:#555 2px 2px 4px;
+	border-radius:2px 2px 2px 2px;
+}
+
+.vmenu *{
+	font-size:12px;
+}
+
+.vmenu .first_li span{
+	width:180px;
+	display:block;
+	padding:5px 10px;
+	cursor:pointer
+}
+
+.vmenu .inner_li{
+	display:none;
+	margin-left:200px;
+	position:absolute;
+	border:1px solid #aaa;
+	border-left:1px solid #ccc;
+	margin-top:-28px;
+	background:#efefef !important;
+	box-shadow:#555 2px 2px 4px;
+	border-radius:2px 2px 2px 2px;
+	color:#000;
+}
+
+.vmenu .sep_li{
+	border-top: 1px ridge #aaa;
+	margin:5px 0;
+}
+
+.vmenu .fill_title{
+	font-size:11px;font-weight:bold;
+	/*height:15px;*/
+	/*overflow:hidden;*/
+	word-wrap:break-word;
+}
+
+.vmenu_haschild{
+	background:url(arrow_blk.png) no-repeat right !important;
+}
+
+.vmenu span{
+	color:#000;
+	text-align:left;
+}
+
+.vmenu span:hover{
+	background-color: #f00 !important; 
+	cursor:pointer;
+	color:#fff;
+}
+
+.vmenu_dispan{
+	color: #999 !important;
+}

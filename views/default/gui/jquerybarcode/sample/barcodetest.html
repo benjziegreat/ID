@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <style>
+            * {
+                color:#7F7F7F;
+                font-family:Arial,sans-serif;
+                font-size:12px;
+                font-weight:normal;
+            }    
+            
+            #submit{
+                clear: both;
+            }
+            #barcodeTarget,
+            #canvasTarget{
+                margin-top: 20px;
+            }        
+        </style>
+
+        <script type="text/javascript" src="jquery-1.3.2.min.js"></script>
+        <script type="text/javascript" src="../jquery-barcode.js"></script>
+        <script type="text/javascript">
+
+            function generateBarcode() {
+                var value = $("#barcodeValue").val();
+                var btype = 'code39';
+                var renderer = $("input[name=renderer]:checked").val();
+
+                var quietZone = false;
+                if ($("#quietzone").is(':checked') || $("#quietzone").attr('checked')) {
+                    quietZone = true;
+                }
+
+                var settings = {
+                    output: renderer,
+                    bgColor: $("#bgColor").val(),
+                    color: $("#color").val(),
+                    barWidth: 1.8,
+                    barHeight: 50
+                };
+                if ($("#rectangular").is(':checked') || $("#rectangular").attr('checked')) {
+                    value = {code: value, rect: true};
+                }
+
+
+                $("#barcodeTarget").html("").show().barcode(value, btype, settings);
+                $('#barcodeTarget div:last').remove();
+            }
+
+
+
+            $(function() {
+
+                generateBarcode();
+            });
+
+        </script>
+    </head>
+    <body>
+        <div id="generator">
+            Please fill in the code : <input type="text" id="barcodeValue" value="12345670">
+
+            <div id="submit">
+                <input type="button" onclick="generateBarcode();" value="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Generate the barcode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
+            </div>
+
+        </div>
+
+        <div id="barcodeTarget" class="barcodeTarget"></div>
+
+
+    </body>
+</html>

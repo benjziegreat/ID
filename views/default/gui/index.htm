@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Highcharts Example</title>
+
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script type="text/javascript">
+$(function () {
+    var chart;
+    $(document).ready(function() {
+        chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'container',
+                type: 'column'
+            },
+            title: {
+                text: 'レウィン　サムポルー'
+            },
+            subtitle: {
+                text: 'Source: 私のあたま'
+            },
+            xAxis: {
+                categories: [
+                    'Product 1',
+                    'Product 2',
+                    'Product 3',
+                    'Product 4',
+                    'Product 5',
+                    'Product 6',
+                    'Product 7',
+                    'Product 8',
+                    'Product 9',
+                    'Product 10',
+                    'Product 11',
+                    'Product 12',
+					'Product 1',
+                    'Product 2',
+                    'Product 3',
+                    'Product 4',
+                    'Product 5',
+                    'Product 6',
+                    'Product 7',
+                    'Product 8',
+                    'Product 9',
+                    'Product 10',
+                    'Product 11',
+                    'Product 12',
+					'Product 1',
+                    'Product 2',
+                    'Product 3',
+                    'Product 4',
+                    'Product 5',
+                    'Product 6',
+                    'Product 7',
+                    'Product 8',
+                    'Product 9',
+                    'Product 10',
+                    'Product 11',
+                    'Product 12',
+					'Product 1',
+                    'Product 2',
+                    'Product 3',
+                    'Product 4',
+                    'Product 5',
+                    'Product 6',
+                    'Product 7',
+                    'Product 8',
+                    'Product 9',
+                    'Product 10',
+                    'Product 11',
+                    'Product 12'
+                ],
+				labels: {
+				rotation: -45,
+				align: 'right',
+				style: {
+					font: 'normal 13px Verdana, sans-serif'
+				}
+			}
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: ''
+                }
+            },
+            legend: {
+                layout: 'vertical',
+                backgroundColor: '#FFFFFF',
+                align: 'left',
+                verticalAlign: 'top',
+                x: 100,
+                y: 70,
+				width:100,
+                floating: true,
+                shadow: true
+            },
+            tooltip: {
+                formatter: function() {
+                    return ''+
+                        this.x +': '+ this.y +'';
+                }
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+                series: 
+			[
+				{
+					name: 'Balance',
+					color:'#FCD116',
+					data: [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2,48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2,48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2,48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2]
+		
+				},
+				{
+					name: 'Allocated',
+					color:'#00AF33',
+					data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3,83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3,83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3,83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3]
+		
+				}, 
+				{
+					name: 'Unallocated',
+					color: '#F57636',
+					data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4,49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4,49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4,49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+		
+				},
+			]
+        });
+    });
+    
+});
+		</script>
+	</head>
+	<body>
+<script src="js/highcharts.js"></script>
+<script src="js/modules/exporting.js"></script>
+
+<div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+
+	</body>
+</html>

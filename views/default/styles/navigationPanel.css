@@ -1,0 +1,140 @@
+@charset "utf-8";
+/* CSS Document */
+/* CSS Document */
+
+/* dock */
+#dock{
+    margin:0px; 
+    padding:0px; 
+    list-style:none; 
+    top:0px;
+    z-index:100; 
+/*    background-color:#FE3F44; */
+    left:0px;
+}
+#dock > li {
+    border-radius: 3px;
+}
+
+#dock #menu {
+    background-image:url('../images/main-menu-v.png');
+}
+
+#dock > li:hover {
+    background-position:-40px 0px;
+}
+
+.topnav {
+    width: 250px;
+    padding: 40px 28px 25px 0;
+    font-family:Arial, Helvetica, sans-serif;
+    height:100%;
+    z-index:100;
+	
+}
+
+
+ul.topnav {
+    padding: 0;
+    margin: 0;
+    font-size: 1em;
+    line-height: 0.5em;
+    list-style: none;
+    margin-left: 40px;
+	overflow:hidden;
+	top:-3px;
+
+}
+
+ul.topnav li {
+
+}
+
+ul.topnav li a {
+    line-height: 10px;
+    font-size: 11px;
+    padding: 10px 5px;
+    color: #FFF;
+    display: block;
+    text-decoration: none;
+    font-weight: bolder;
+    background-color:#e80000;
+    cursor: pointer;
+
+}
+
+ul.topnav li a:hover {
+    background-color:#675C7C;
+    color:white;
+}
+
+ul.topnav ul {
+    margin: 0;
+    padding: 0;
+    display: none;
+    height: 200px;
+    overflow: auto;
+    background: #F88;
+}
+
+ul.topnav ul li {
+    height:auto;
+    margin: 0;
+    padding: 0;
+    clear: both;
+    padding-bottom: 10px;
+}
+
+ul.topnav ul li{
+    padding-left: 10px;
+    font-size: 12px;
+    font-weight: normal;
+    outline:0;
+    text-align:left;
+    background-color:#ff8888;
+    color:#000000;
+    font-weight:bold;
+}
+
+ul.topnav ul li button {
+    padding-left: 20px;
+    font-size: 10px;
+    font-weight: normal;
+    outline:0;
+    text-align:center;
+    background-color:#ff8888;
+}
+
+
+ul.topnav ul li:hover {
+    background-color:#D3C99C;
+    color:#675C7C;
+}
+
+ul.topnav ul ul li a {
+    color:#fff;
+    margin:auto;
+    margin-left:10px;
+    text-align:left;
+
+}
+
+ul.topnav ul ul li:hover {
+    background-color:#D3CEB8;
+    color:#675C7C;
+}
+
+ul.topnav span{
+    float:right;
+}
+
+.clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+
+

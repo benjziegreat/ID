@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script src="../EAN_UPC.js"></script>
+	<script src="../CODE128.js"></script>
+        <script src="../CODE39.js"></script>
+	<script src="../JsBarcode.js"></script>
+	
+	<script>
+		$(document).ready(function(){
+			$("#barcode").JsBarcode("0017-0222-5",{width:1,height:25,format:'CODE128'});
+                        $("#barcode1").JsBarcode("0017-0222-5",{width:1,height:25,format:'CODE39'});
+                        $("#barcode2").JsBarcode("0017-0222-5",{format:'EAN'});
+		});
+	</script>
+</head>
+<body>
+	<img id="barcode"/>
+        <img id="barcode1"/>
+        <img id="barcode2"/>
+</body>
+</html>
