@@ -95,6 +95,7 @@ ini_set("display_errors", 0);
         <script src="jsgui/barcode/CODE39.js"></script>
         <script src="jsgui/barcode/JsBarcode.js"></script>
         <script src="jsgui/printDivData.js"></script>
+        <script src="photobooth-js/html2canvas.js"></script>
         <script type ="text/javascript" src ='../js/plugins/mask.js'></script> 
         <!-- Image Preloader -->
         <script type="text/javascript">
@@ -527,6 +528,69 @@ ini_set("display_errors", 0);
                 clickLabel();
 
             }
+            function printFramePrimacy2(printingType) {
+                var message = "Do you want to print ID \n using the Evolis Primacy 2 printer?";
+                if(printingType){
+                    message = "Do you want to print PVC ID \n using the Evolis Primacy 2 printer?";
+                }
+                msgBox(message, "Confirmation", "ask", "Yes|No", 300, 250, function (dlgvalue) {
+                    clickLabel();
+                    if (dlgvalue == 1) {
+                        animation(1);
+                        $.ajax({
+                            url: "../../../models/mod.cjc.alumnirecord.php?ACTION=updateprintinghistory",
+                            type: "POST",
+                            data: {
+                                POSTPARAM: {
+                                    idnum:seriesIDs.substring(0,seriesIDs.length-1),
+                                    type: 'multiple'
+                                }
+                            },
+                            success: function (emp_id) {
+
+                                if (emp_id !== "") {
+                                    $('span br').map(function(index,elem){
+                                     $(elem).removeAttr('style');
+                                    });
+                                    $('div[id^="emp_idtype"],div[id^="emp_id"],div[class^="class_barcode"]').map(function(index,elem){
+                                          var margintop=parseInt($(elem).css('margin-top').split('px').join(''));
+                                          $(elem).css('margin-top',(margintop-3)+'px')
+                                    });
+                                    if(printingType==='PVC'){
+                                        //Adjust PrintPreview format here
+                                        console.log('printFramePrimacy2-> printingType', printingType);
+                                        $('div[id="_front"]').css('padding-left','10px');
+                                    }
+                                    printDivData_Primacy2('idContainer', printingType);
+                                } else {
+                                    console.log(emp_id);
+                                    var message = "<label id='<?= $strModuleName ?>-LBL_SAVEUPDATEERROR'><?= $LBL_SAVEUPDATEERROR ?></label>";
+                                    msgBox(message, "Error", "failed", "OK", 300, 250, function (dlgvalue) {
+
+                                    });
+                                    var messageTitle = "<label id='<?= $strModuleName ?>-LBL_SYSTEMMESSAGETITLE'><?= $LBL_SYSTEMMESSAGETITLE ?>System Message</label>";
+                                    $('div[class*="ui-dialog"][aria-labelledby="ui-dialog-title-___msgBox"][style*="display: block"]').find('span[id="ui-dialog-title-___msgBox"]').html(messageTitle);
+                                    $('div[class*="ui-dialog"][aria-labelledby="ui-dialog-title-___msgBox"][style*="display: block"]').find('span[id="___msgText"]').css('float', 'left').css('font-weight', 'bolder').css('margin-top', '26px');
+                                    $('div[class*="ui-dialog"][aria-labelledby="ui-dialog-title-___msgBox"][style*="display: block"]').find('img[id="___msgIcon"]').css('float', 'left');
+                                    $('div[id="___msgBox"]').css("height", "");
+                                    clickLabel();
+                                    animation(0);
+                                }
+
+                            }
+                        });
+                    }else{
+                    parent.$('div[aria-labelledby="ui-dialog-title-frmAlumniIDPreview"] div:eq(0) a').click();
+                    }
+                });
+                var messageTitle = "<label id='<?= $strModuleName ?>-LBL_SYSTEMMESSAGETITLE'><?= $LBL_SYSTEMMESSAGETITLE ?>System Message</label>";
+                $('div[class*="ui-dialog"][aria-labelledby="ui-dialog-title-___msgBox"][style*="display: block"]').find('span[id="ui-dialog-title-___msgBox"]').html(messageTitle);
+                $('div[class*="ui-dialog"][aria-labelledby="ui-dialog-title-___msgBox"][style*="display: block"]').find('span[id="___msgText"]').css('float', 'left').css('font-weight', 'bolder').css('margin-top', '26px');
+                $('div[class*="ui-dialog"][aria-labelledby="ui-dialog-title-___msgBox"][style*="display: block"]').find('img[id="___msgIcon"]').css('float', 'left');
+                $('div[id="___msgBox"]').css("height", "");
+                clickLabel();
+
+            }
             function padLeft(n, width, z) {
                 var i = 0;
                 z = z || '0';
@@ -542,8 +606,10 @@ ini_set("display_errors", 0);
     <div class="container" style="color:black;font-family: Arial,sans-serif;    padding: 0px 3.5% 0px 0%;">
         <div class="panel-heading" id="divTopHeader" style="height: 40px;width: 100%;padding: 0px;">           
             <div class="col-md-12" style="float:left;margin-top:3px;">
+                <button onclick="printFramePrimacy2()" name="btnPrintIDNew" class="btn btn-info" title="Print Primacy-2 ID" style="padding: 7px 12px;float: right;font-size: 12px;min-width: 80px;margin-right: 0.5%;">
+                    <span class="glyphicon glyphicon-print"></span> Print Primacy-2 ID</button>
                 <button onclick="printFrame()" id="cjc.alumnirecord-LBL_PRINTPDS" name="btnPrintID" class="btn btn-info" title="Print ID" style="padding: 7px 12px;float: right;font-size: 12px;min-width: 80px;margin-right: 0.5%;">
-                    <span class="glyphicon glyphicon-print"></span> Print ID</button> 
+                    <span class="glyphicon glyphicon-print"></span> Print ID</button>
                 <button onclick="printFrame('PVC')" id="cjc.alumnirecord-LBL_PRINTPDS" name="btnPrintID" class="btn btn-info" title="Print ID" style="padding: 7px 12px;float: right;font-size: 12px;min-width: 80px;margin-right: 0.5%;">
                     <span class="glyphicon glyphicon-print"></span> Print PVC ID</button>
             </div>

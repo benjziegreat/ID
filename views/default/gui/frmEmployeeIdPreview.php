@@ -95,6 +95,7 @@ ini_set("display_errors", 0);
         <script src="jsgui/barcode/CODE39.js"></script>
         <script src="jsgui/barcode/JsBarcode.js"></script>
         <script src="jsgui/printDivData.js"></script>
+        <script src="photobooth-js/html2canvas.js"></script>
         <script type ="text/javascript" src ='../js/plugins/mask.js'></script> 
         <!-- Image Preloader -->
         <script type="text/javascript">
@@ -495,6 +496,54 @@ ini_set("display_errors", 0);
                 clickLabel();
 
             }
+            function printFramePrimacy2() {
+                var message = "Do you want to print ID \nusing the Evolis Primacy 2 printer?";
+                msgBox(message, "Confirmation", "ask", "Yes|No", 300, 250, function (dlgvalue) {
+                    clickLabel();
+                    if (dlgvalue == 1) {
+                        animation(1);
+                        $.ajax({
+                            url: "../../../models/mod.cjc.employeerecord.php?ACTION=updateprintinghistory",
+                            type: "POST",
+                            data: {
+                                POSTPARAM: {
+                                    idnum:seriesIDs.substring(0,seriesIDs.length-1),
+                                    type: 'multiple'
+                                }
+                            },
+                            success: function (emp_id) {
+
+                                if (emp_id !== "") {
+                                    printDivData_Primacy2('idContainer');
+                                } else {
+                                    console.log(emp_id);
+                                    var message = "<label id='<?= $strModuleName ?>-LBL_SAVEUPDATEERROR'><?= $LBL_SAVEUPDATEERROR ?></label>";
+                                    msgBox(message, "Error", "failed", "OK", 300, 250, function (dlgvalue) {
+
+                                    });
+                                    var messageTitle = "<label id='<?= $strModuleName ?>-LBL_SYSTEMMESSAGETITLE'><?= $LBL_SYSTEMMESSAGETITLE ?>System Message</label>";
+                                    $('div[class*="ui-dialog"][aria-labelledby="ui-dialog-title-___msgBox"][style*="display: block"]').find('span[id="ui-dialog-title-___msgBox"]').html(messageTitle);
+                                    $('div[class*="ui-dialog"][aria-labelledby="ui-dialog-title-___msgBox"][style*="display: block"]').find('span[id="___msgText"]').css('float', 'left').css('font-weight', 'bolder').css('margin-top', '26px');
+                                    $('div[class*="ui-dialog"][aria-labelledby="ui-dialog-title-___msgBox"][style*="display: block"]').find('img[id="___msgIcon"]').css('float', 'left');
+                                    $('div[id="___msgBox"]').css("height", "");
+                                    clickLabel();
+                                    animation(0);
+                                }
+
+                            }
+                        });
+                    }else{
+                     parent.$('div[aria-labelledby="ui-dialog-title-frmEmployeeIDPreview"] div:eq(0) a').click();
+                    }
+                });
+                var messageTitle = "<label id='<?= $strModuleName ?>-LBL_SYSTEMMESSAGETITLE'><?= $LBL_SYSTEMMESSAGETITLE ?>System Message</label>";
+                $('div[class*="ui-dialog"][aria-labelledby="ui-dialog-title-___msgBox"][style*="display: block"]').find('span[id="ui-dialog-title-___msgBox"]').html(messageTitle);
+                $('div[class*="ui-dialog"][aria-labelledby="ui-dialog-title-___msgBox"][style*="display: block"]').find('span[id="___msgText"]').css('float', 'left').css('font-weight', 'bolder').css('margin-top', '26px');
+                $('div[class*="ui-dialog"][aria-labelledby="ui-dialog-title-___msgBox"][style*="display: block"]').find('img[id="___msgIcon"]').css('float', 'left');
+                $('div[id="___msgBox"]').css("height", "");
+                clickLabel();
+
+            }
             function padLeft(n, width, z) {
                 var i = 0;
                 z = z || '0';
@@ -510,8 +559,10 @@ ini_set("display_errors", 0);
     <div class="container" style="color:black;font-family: Arial,sans-serif;    padding: 0px 3.5% 0px 0%;">
         <div class="panel-heading" id="divTopHeader" style="height: 40px;width: 100%;padding: 0px;">           
             <div class="col-md-12" style="float:left;margin-top:3px;">
+                <button onclick="printFramePrimacy2()" name="btnPrintIDNew" class="btn btn-info btn-lg" title="Print Primacy-2 ID" style="padding: 7px 12px;float: right;font-size: 12px;min-width: 80px;margin-right: 0.5%;">
+                    <span class="glyphicon glyphicon-print"></span> Print Primacy-2 ID</button>
                 <button onclick="printFrame()" id="cjc.employeerecord-LBL_PRINTPDS" name="btnPrintID" class="btn btn-info btn-lg" title="Print ID" style="padding: 7px 12px;float: right;font-size: 12px;min-width: 80px;margin-right: 0.5%;">
-                    <span class="glyphicon glyphicon-print"></span> Print ID</button> 
+                    <span class="glyphicon glyphicon-print"></span> Print ID</button>
             </div>
         </div>
         <div class="panel-body" style="padding-bottom:0px;">
