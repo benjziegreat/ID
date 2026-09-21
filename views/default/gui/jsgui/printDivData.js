@@ -17,6 +17,12 @@ function showPrimacy2PrintPreview(container) {
     var pageCssStyle = "@page { size: 54mm 86mm portrait; margin: 0; }";
     var mediaPrintCssStyle = "@media print { #primacy2PreviewHeading, #primacy2PreviewActions { display: none !important; } }";
 
+    var cardCount = $(container).children('div[id^="div_print_id"]').length;
+    if (cardCount === 0) {
+        cardCount = 1;
+    }
+    var headingText = cardCount + " Card" + (cardCount > 1 ? "s" : "") + " ready to Print";
+
     var previewHtml = "<html><head><title>Print Preview - Evolis Primacy 2</title>" +
             "<style>" +
             "html,body{height:100%;}" +
@@ -30,14 +36,19 @@ function showPrimacy2PrintPreview(container) {
             mediaPrintCssStyle +
             // Fixed to the bottom of the window (not just after the cards in normal flow), so
             // with many cards the actions stay reachable without needing to scroll past them.
-            "#primacy2PreviewActions{position:fixed;left:0;bottom:0;width:100%;padding:12px 0;background:#fff;box-shadow:0 -2px 6px rgba(0,0,0,0.2);z-index:1000;box-sizing:border-box;}" +
+            "#primacy2PreviewActions{position:fixed;left:0;bottom:0;width:100%;padding:12px 0;background:#fff;box-shadow:0 -2px 6px rgba(0,0,0,0.2);z-index:1000;box-sizing:border-box;text-align:center;}" +
             "#primacy2PreviewActions button{padding:10px 20px;font-size:14px;margin:0 6px;cursor:pointer;}" +
+            "#primacy2PreviewNote{font-size:12px;color:#a15c00;margin:6px 0 0 0;}" +
             "</style></head><body>" +
-            "<h3 id='primacy2PreviewHeading'>Print Preview</h3>" +
+            "<h3 id='primacy2PreviewHeading'>" + headingText + "</h3>" +
             "<div id='primacy2PreviewCards'>" + container.innerHTML + "</div>" +
             "<div id='primacy2PreviewActions'>" +
             "<button id='btnConfirmPrimacy2Print'>Print to Evolis Primacy 2</button>" +
             "<button id='btnCancelPrimacy2Print'>Cancel</button>" +
+            // Each card's front/back are sent as adjacent pages (the pairing a duplex setting
+            // expects), but nothing in a web page can flip the printer's own duplex switch - that
+            // is a print-dialog/driver setting, so remind the user to turn it on there.
+            "<div id='primacy2PreviewNote'>Front and back print as one job per card - make sure \"Print on both sides\" / duplex is turned on for the printer in the print dialog, so each pair lands on the same card.</div>" +
             "</div>" +
             "</body></html>";
 
