@@ -561,7 +561,7 @@ ini_set("display_errors", 0);
                                         console.log('printFramePrimacy2-> printingType', printingType);
                                         $('div[id="_front"]').css('padding-left','10px');
                                     }
-                                    printDivData_Primacy2('idContainer', printingType);
+                                    printDivData_Primacy2('idContainer', printingType, true);
                                 } else {
                                     console.log(emp_id);
                                     var message = "<label id='<?= $strModuleName ?>-LBL_SAVEUPDATEERROR'><?= $LBL_SAVEUPDATEERROR ?></label>";

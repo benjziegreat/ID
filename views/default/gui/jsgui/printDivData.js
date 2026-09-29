@@ -3,17 +3,17 @@
 // what Ctrl+P / the regular "Print ID" button would show. Confirming in this preview opens the
 // browser's native print dialog so the user picks the printer themselves (see
 // printPrimacy2CardsViaBrowser) - there is no local Evolis HTTP service to auto-print to.
-function printDivData_Primacy2(divID, printingType) {
+function printDivData_Primacy2(divID, printingType, isAlumni) {
     var container = document.getElementById(divID);
     if (divID === undefined || divID === null || !container) {
         attributeNotID();
         return;
     }
     animation(0);
-    showPrimacy2PrintPreview(container);
+    showPrimacy2PrintPreview(container, isAlumni);
 }
 
-function showPrimacy2PrintPreview(container) {
+function showPrimacy2PrintPreview(container, isAlumni) {
     var pageCssStyle = "@page { size: 54mm 86mm portrait; margin: 0; }";
     var mediaPrintCssStyle = "@media print { #primacy2PreviewHeading, #primacy2PreviewActions { display: none !important; } }";
 
@@ -63,87 +63,80 @@ function showPrimacy2PrintPreview(container) {
 
     previewWindow.document.getElementById("btnConfirmPrimacy2Print").onclick = function () {
         previewWindow.close();
-        printPrimacy2CardsViaBrowser(container);
+        printPrimacy2CardsViaBrowser(container, isAlumni);
     };
     previewWindow.document.getElementById("btnCancelPrimacy2Print").onclick = function () {
         previewWindow.close();
     };
 }
 
-// Neither "transform: scale" nor "zoom" reliably stopped Chrome's print engine from still
-// splitting one (visually shrunk) card across 2 physical pages - doubling every card's page
-// count (4 instead of 2 per card, 8 instead of 4 for two students) - because both approaches
-// force content that is naturally larger than the declared 54mm x 86mm page into that small a
-// box, and pagination keeps measuring against the pre-scale size regardless. Sidestep the whole
-// problem: don't shrink the content at all, and instead size each printed PAGE to the card's own
-// natural on-screen pixel size (converted to mm). Content then never exceeds its page, so there
-// is nothing for the engine to paginate - exactly one page per side. The Evolis/IDP card printer
-// driver is what actually fits that page onto the physical CR-80 card, which is what such
-// card-printer drivers are built to do regardless of the exact page size an application submits.
+// Declaring an explicit @page size in mm (e.g. "86mm 54mm") doesn't reliably match a card
+// printer driver's own named paper size (e.g. IDP's "CR80 SMART") - Chrome maps our number onto
+// whichever driver size it considers closest, and when that mapped size doesn't exactly match
+// ours, the card ends up not filling the page and the job can even repaginate into extra sheets.
+// There's no way to read the driver's exact paper dimensions from a web page, so stop trying to
+// declare one: say only the ORIENTATION ("landscape"/"portrait", which IS reliably respected)
+// and let the browser/driver use whatever paper size is already selected. The page wrapper below
+// fills 100% of that page (h/w unknown in advance), and the card itself is never scaled - only
+// centered - so the design can't be distorted regardless of what that final page size turns out
+// to be.
 function buildPrimacy2PrintPage(sourceEl) {
     if (!sourceEl) {
-        return {html: "", widthMm: 0, heightMm: 0};
+        return "";
     }
-    var rect = sourceEl.getBoundingClientRect();
-    var widthMm = rect.width / 96 * 25.4;
-    var heightMm = rect.height / 96 * 25.4;
     var clone = sourceEl.cloneNode(true);
     clone.style.float = "none";
     clone.style.margin = "0";
 
-    // Belt-and-suspenders: the page now matches the card's natural width exactly, so text fields
-    // should no longer need to wrap, but force it anyway in case any field's own declared width
-    // is narrower than its text under print layout.
     var textSpans = clone.querySelectorAll("span");
     for (var s = 0; s < textSpans.length; s++) {
         textSpans[s].style.whiteSpace = "nowrap";
     }
 
-    var html = "<div class='primacy2PrintPage' style='width:" + widthMm + "mm;height:" + heightMm + "mm;'>" +
-            clone.outerHTML +
-            "</div>";
-    return {html: html, widthMm: widthMm, heightMm: heightMm};
+    return "<div class='primacy2PrintPage'>" + clone.outerHTML + "</div>";
 }
 
 // Prints the SAME live "_front"/"_back" markup shown in the preview through the browser's own
 // print dialog, so the user picks the printer themselves (there is no local Evolis HTTP service
 // to auto-print to). Each card's front and back come out as two consecutive pages, front then
 // back - which is what a printer's "print on both sides" / duplex option expects in order to
-// print both sides of the same card.
-function printPrimacy2CardsViaBrowser(container) {
+// print both sides of the same card. Works the same for one card or many - each card just adds
+// its own front/back page pair.
+function printPrimacy2CardsViaBrowser(container, isAlumni) {
     var $cards = $(container).children('div[id^="div_print_id"]');
     if ($cards.length === 0) {
         $cards = $(container);
     }
 
-    var pageWidthMm = 54;
-    var pageHeightMm = 86;
-    var haveSize = false;
+    var firstFront = $cards.first().find('div[id="div_img_id_front"]')[0];
+    var firstRect = firstFront ? firstFront.getBoundingClientRect() : {width: 0, height: 0};
+    var isLandscape = firstRect.width > firstRect.height;
+
+    // Alumni landscape cards print oversized on the Primacy 2 at full scale, so those (only)
+    // print at 86%. Alumni portrait, and Student/Employee at any orientation, stay at default
+    // (100%) scale.
+    var printScale = (isAlumni && isLandscape) ? 0.86 : 1;
+
     var pagesHtml = "";
     $cards.each(function () {
         var $card = $(this);
-        [$card.find('div[id="div_img_id_front"]')[0], $card.find('div[id="div_img_id_back"]')[0]].forEach(function (el) {
-            var page = buildPrimacy2PrintPage(el);
-            if (!page.html) {
-                return;
-            }
-            if (!haveSize) {
-                pageWidthMm = page.widthMm;
-                pageHeightMm = page.heightMm;
-                haveSize = true;
-            }
-            pagesHtml += page.html;
-        });
+        pagesHtml += buildPrimacy2PrintPage($card.find('div[id="div_img_id_front"]')[0]);
+        pagesHtml += buildPrimacy2PrintPage($card.find('div[id="div_img_id_back"]')[0]);
     });
 
     var docs = "<html><head><title>Print - Evolis Primacy 2</title>" +
             "<style>" +
-            "@page { size: " + pageWidthMm + "mm " + pageHeightMm + "mm; margin: 0; }" +
-            "body{margin:0;background:#fff;color:black;}" +
-            // page-break-inside: avoid keeps a page as one atomic unit; the "+" selector (break
-            // BEFORE every page after the first, rather than page-break-after on every page) also
-            // avoids a trailing blank page after the last one.
-            ".primacy2PrintPage{overflow:hidden;position:relative;page-break-inside:avoid;break-inside:avoid;}" +
+            "@page { size: " + (isLandscape ? "landscape" : "portrait") + "; margin: 0; }" +
+            "html,body{margin:0;background:#fff;color:black;height:100%;width:100%;}" +
+            // Flex-centers the (unscaled) card on whatever page size the printer/driver actually
+            // uses. "100vh" is unreliable here - Chrome's print viewport doesn't always match the
+            // resolved @page box, especially once the dialog's own Layout dropdown re-resolves the
+            // orientation after this CSS already ran - so each page is chained to the actual page
+            // box via percentage heights (html/body/page all 100%) instead. page-break-inside:
+            // avoid keeps a page as one atomic unit; the "+" selector (break BEFORE every page
+            // after the first, rather than page-break-after on every page) avoids a trailing blank
+            // page after the last one.
+            ".primacy2PrintPage{width:100%;height:100%;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;page-break-inside:avoid;break-inside:avoid;zoom:" + printScale + ";}" +
             ".primacy2PrintPage + .primacy2PrintPage{page-break-before:always;break-before:always;}" +
             "</style></head><body>" +
             pagesHtml +
@@ -155,6 +148,11 @@ function printPrimacy2CardsViaBrowser(container) {
     printWindow.document.close();
     printWindow.focus();
     setTimeout(function () {
+        // Pages are already ordered front,back per card above - that's all this code can
+        // guarantee. Whether they land on the same physical card is the printer driver's
+        // "Print on both sides" / Duplex toggle, which only the OS print dialog (opening next)
+        // can set, so remind the user right before it appears.
+        printWindow.alert("Turn ON \"Print on both sides\" / Duplex in the dialog that opens next, so each card's front and back print on the same card.");
         printWindow.print();
     }, 300);
 }
